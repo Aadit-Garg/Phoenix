@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col justify-center items-center text-center px-4">
+    <!-- Hero Section -->
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div
+                class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-shield-alt text-white text-3xl"></i>
+            </div>
+
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">
+                Phoenix Safety
+            </h1>
+            <p class="text-xl text-gray-600 mb-6">
+                Smart Campus Protection for Women
+            </p>
+            <p class="text-gray-500 mb-8 leading-relaxed">
+                Transforming campus safety through AI-powered emergency response,
+                real-time location tracking, and community-driven security.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <i class="fas fa-bolt text-purple-500 text-xl mb-2"></i>
+                    <h3 class="font-semibold text-gray-800">Instant SOS</h3>
+                    <p class="text-sm text-gray-600">One-tap emergency alerts</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <i class="fas fa-microphone text-blue-500 text-xl mb-2"></i>
+                    <h3 class="font-semibold text-gray-800">Voice Commands</h3>
+                    <p class="text-sm text-gray-600">Hands-free activation</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <i class="fas fa-map-marked-alt text-green-500 text-xl mb-2"></i>
+                    <h3 class="font-semibold text-gray-800">Safety Mapping</h3>
+                    <p class="text-sm text-gray-600">AI-powered risk prediction</p>
+                </div>
+            </div>
+
+            <a href="/dashboard"
+                class="bg-phoenix-primary text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:bg-phoenix-secondary transition duration-300 inline-block">
+                <i class="fas fa-play mr-2"></i>Get Started
+            </a>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div class="bg-white p-4 rounded-xl shadow">
+                <div class="text-2xl font-bold text-phoenix-primary">60s</div>
+                <div class="text-sm text-gray-600">Response Time</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow">
+                <div class="text-2xl font-bold text-green-500">24/7</div>
+                <div class="text-sm text-gray-600">Protection</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow">
+                <div class="text-2xl font-bold text-blue-500">100%</div>
+                <div class="text-sm text-gray-600">Campus Coverage</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow">
+                <div class="text-2xl font-bold text-purple-500">AI</div>
+                <div class="text-sm text-gray-600">Powered</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize voice commands on homepage
+        if (window.safetyApp) {
+            window.safetyApp.startVoiceMonitoring();
+        }
+    });
+</script>
+{% endblock %}

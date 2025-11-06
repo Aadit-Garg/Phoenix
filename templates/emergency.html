@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6">
+    <!-- Emergency SOS Section -->
+    <div class="text-center mb-8">
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Emergency SOS</h2>
+            <p class="text-gray-600 mb-6">Immediate help with one tap</p>
+
+            <button id="emergencySosButton"
+                class="w-80 h-80 bg-gradient-to-br from-red-500 to-red-600 rounded-full shadow-2xl flex items-center justify-center mx-auto emergency-glow active:scale-95 transition-transform duration-200">
+                <div class="text-white text-center">
+                    <i class="fas fa-bell text-6xl mb-4"></i>
+                    <p class="text-4xl font-bold">SOS</p>
+                    <p class="text-xl mt-2 opacity-90">EMERGENCY</p>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Emergency Features -->
+    <div class="grid grid-cols-1 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Voice Emergency</h3>
+            <button id="voiceEmergency"
+                class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-4 rounded-xl font-bold text-lg">
+                <i class="fas fa-microphone-alt mr-2"></i>Say "Emergency" or "Help"
+            </button>
+            <p class="text-gray-500 text-sm mt-3 text-center">
+                Voice commands are always active for emergencies
+            </p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Shake for Help</h3>
+            <div class="flex items-center justify-center p-4 bg-yellow-50 rounded-lg">
+                <i class="fas fa-mobile-alt text-yellow-500 text-2xl mr-3"></i>
+                <div>
+                    <p class="font-semibold">Shake your phone vigorously</p>
+                    <p class="text-sm text-yellow-600">To trigger emergency alert</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Emergency Contacts</h3>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center p-4 bg-red-50 rounded-lg">
+                <div>
+                    <p class="font-semibold text-red-800">Campus Security</p>
+                    <p class="text-red-600 text-sm">+91-9876543210</p>
+                </div>
+                <button class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold">
+                    <i class="fas fa-phone mr-1"></i>Call
+                </button>
+            </div>
+            <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
+                <div>
+                    <p class="font-semibold text-blue-800">Local Police</p>
+                    <p class="text-blue-600 text-sm">100</p>
+                </div>
+                <button class="bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold">
+                    <i class="fas fa-phone mr-1"></i>Call
+                </button>
+            </div>
+            <div class="flex justify-between items-center p-4 bg-green-50 rounded-lg">
+                <div>
+                    <p class="font-semibold text-green-800">Medical Emergency</p>
+                    <p class="text-green-600 text-sm">102</p>
+                </div>
+                <button class="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold">
+                    <i class="fas fa-phone mr-1"></i>Call
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Info -->
+    <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mt-6">
+        <div class="flex items-start">
+            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3 mt-1"></i>
+            <div>
+                <p class="font-semibold text-yellow-800">What happens when you trigger SOS?</p>
+                <ul class="text-yellow-700 text-sm mt-2 list-disc list-inside space-y-1">
+                    <li>Campus security is immediately notified with your live location</li>
+                    <li>Nearby CCTV cameras are activated for visual confirmation</li>
+                    <li>Nearest security patrol is dispatched to your location</li>
+                    <li>Your emergency contacts receive instant notifications</li>
+                    <li>Nearby Phoenix users are alerted to provide assistance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // SOS Button - Immediate trigger
+        document.getElementById('emergencySosButton').addEventListener('click', function () {
+            triggerEmergencySOS();
+        });
+
+        // Voice emergency button
+        document.getElementById('voiceEmergency').addEventListener('click', function () {
+            // Simulate voice emergency
+            fetch('/api/voice-command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    command: 'emergency help me now'
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'emergency_triggered') {
+                        triggerEmergencySOS();
+                    }
+                });
+        });
+
+        function triggerEmergencySOS() {
+            // Show emergency overlay immediately
+            document.getElementById('emergencyOverlay').classList.remove('hidden');
+
+            // Vibrate phone (if supported)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+
+            // Get current location
+            fetch('/api/get-location')
+                .then(response => response.json())
+                .then(location => {
+                    // Send emergency alert
+                    return fetch('/api/trigger-emergency', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: 'user123',
+                            type: 'emergency_sos',
+                            source: 'emergency_page',
+                            location: location,
+                            battery_level: 85
+                        })
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Emergency alert sent:', data);
+                    // Update UI with response info
+                    if (data.response_time_estimate) {
+                        document.getElementById('etaTime').textContent = data.response_time_estimate;
+                    }
+                    if (data.nearby_devices) {
+                        document.getElementById('nearbyAlert').textContent =
+                            `${data.nearby_devices} nearby users alerted`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending emergency alert:', error);
+                });
+        }
+
+        // Cancel emergency
+        document.getElementById('cancelEmergency').addEventListener('click', function () {
+            document.getElementById('emergencyOverlay').classList.add('hidden');
+
+            // Send cancel notification
+            fetch('/api/cancel-emergency', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: 'user123',
+                    emergency_id: 'current'
+                })
+            });
+        });
+    });
+</script>
+{% endblock %}

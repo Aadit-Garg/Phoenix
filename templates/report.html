@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Report Incident</h2>
+        <p class="text-gray-600 mb-6">Help make campus safer by reporting incidents anonymously</p>
+
+        <form id="incidentForm">
+            <!-- Incident Type -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-3">Incident Type</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <label
+                        class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="type" value="harassment" class="mr-3" required>
+                        <div>
+                            <p class="font-semibold">Harassment</p>
+                            <p class="text-xs text-gray-500">Verbal, physical, or online</p>
+                        </div>
+                    </label>
+                    <label
+                        class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="type" value="theft" class="mr-3">
+                        <div>
+                            <p class="font-semibold">Theft</p>
+                            <p class="text-xs text-gray-500">Stolen property</p>
+                        </div>
+                    </label>
+                    <label
+                        class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="type" value="suspicious" class="mr-3">
+                        <div>
+                            <p class="font-semibold">Suspicious Activity</p>
+                            <p class="text-xs text-gray-500">Concerning behavior</p>
+                        </div>
+                    </label>
+                    <label
+                        class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" name="type" value="other" class="mr-3">
+                        <div>
+                            <p class="font-semibold">Other</p>
+                            <p class="text-xs text-gray-500">Other safety concern</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-3">Location</label>
+                <select name="location_id"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    required>
+                    <option value="">Select location...</option>
+                    {% for location_id, location_data in locations.items() %}
+                    <option value="{{ location_id }}">{{ location_data.name }} (Safety: {{ location_data.score }}/5.0)
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Safety Rating -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-3">How safe did you feel? (1-5)</label>
+                <div class="flex justify-between space-x-2">
+                    {% for i in range(1, 6) %}
+                    <label class="flex-1 text-center">
+                        <input type="radio" name="safety_rating" value="{{ i }}" class="hidden" required>
+                        <div
+                            class="p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 safety-rating">
+                            <div class="text-2xl mb-1">
+                                {% for star in range(i) %}⭐{% endfor %}
+                            </div>
+                            <p class="text-sm font-semibold">{{ i }}</p>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-6">
+                <label class="block text-gray-700 font-semibold mb-3">Description</label>
+                <textarea name="description"
+                    placeholder="Please describe what happened (optional but helpful for safety improvements)..."
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent h-32"></textarea>
+            </div>
+
+            <!-- Anonymous Reporting -->
+            <div class="mb-6">
+                <label class="flex items-center">
+                    <input type="checkbox" name="anonymous" checked class="mr-3 rounded">
+                    <span class="text-gray-700">Report anonymously</span>
+                </label>
+                <p class="text-sm text-gray-500 mt-1">Your identity will be kept confidential</p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-4 rounded-xl font-bold text-lg shadow-lg hover:from-purple-600 hover:to-blue-600 transition duration-300">
+                <i class="fas fa-paper-plane mr-2"></i>Submit Report
+            </button>
+        </form>
+    </div>
+
+    <!-- Voice Reporting -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Voice Report</h3>
+        <button id="voiceReport"
+            class="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-4 rounded-xl font-bold text-lg">
+            <i class="fas fa-microphone-alt mr-2"></i>Report with Voice Command
+        </button>
+        <p class="text-gray-500 text-sm mt-3 text-center">
+            Say: "Report harassment at library" or "Report suspicious activity"
+        </p>
+        <div id="voiceReportFeedback" class="mt-3 text-center text-sm hidden"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Safety rating selection
+        document.querySelectorAll('.safety-rating').forEach(element => {
+            element.addEventListener('click', function () {
+                // Remove active class from all
+                document.querySelectorAll('.safety-rating').forEach(el => {
+                    el.classList.remove('bg-purple-50', 'border-purple-500');
+                });
+                // Add active class to clicked
+                this.classList.add('bg-purple-50', 'border-purple-500');
+            });
+        });
+
+        // Form submission
+        document.getElementById('incidentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {
+                type: formData.get('type'),
+                location_id: formData.get('location_id'),
+                safety_rating: parseInt(formData.get('safety_rating')),
+                description: formData.get('description'),
+                anonymous: formData.get('anonymous') === 'on'
+            };
+
+            fetch('/api/report-incident', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        // Show success message
+                        alert('Thank you for reporting! Your incident has been recorded anonymously and will help improve campus safety.');
+                        // Reset form
+                        this.reset();
+                        document.querySelectorAll('.safety-rating').forEach(el => {
+                            el.classList.remove('bg-purple-50', 'border-purple-500');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error reporting incident:', error);
+                    alert('Sorry, there was an error submitting your report. Please try again.');
+                });
+        });
+
+        // Voice reporting
+        document.getElementById('voiceReport').addEventListener('click', function () {
+            const feedback = document.getElementById('voiceReportFeedback');
+            feedback.classList.remove('hidden');
+            feedback.innerHTML = '<i class="fas fa-circle text-red-500 animate-pulse mr-2"></i>Listening... Describe your incident';
+
+            // Simulate voice processing
+            setTimeout(() => {
+                const reports = [
+                    "harassment near the library",
+                    "suspicious activity in north parking",
+                    "theft at cafeteria",
+                    "verbal harassment near hostel"
+                ];
+                const randomReport = reports[Math.floor(Math.random() * reports.length)];
+
+                feedback.innerHTML = `<span class="text-green-600">Reported: "${randomReport}" - Thank you for making campus safer!</span>`;
+
+                // Auto-fill form based on voice command
+                if (randomReport.includes('harassment')) {
+                    document.querySelector('input[value="harassment"]').checked = true;
+                } else if (randomReport.includes('theft')) {
+                    document.querySelector('input[value="theft"]').checked = true;
+                } else if (randomReport.includes('suspicious')) {
+                    document.querySelector('input[value="suspicious"]').checked = true;
+                }
+
+                if (randomReport.includes('library')) {
+                    document.querySelector('select[name="location_id"]').value = 'library_main';
+                } else if (randomReport.includes('parking')) {
+                    document.querySelector('select[name="location_id"]').value = 'parking_north';
+                } else if (randomReport.includes('cafeteria')) {
+                    document.querySelector('select[name="location_id"]').value = 'cafeteria';
+                } else if (randomReport.includes('hostel')) {
+                    document.querySelector('select[name="location_id"]').value = 'hostel_a';
+                }
+            }, 3000);
+        });
+    });
+</script>
+
+<style>
+    .safety-rating.active {
+        background-color: #faf5ff;
+        border-color: #7c3aed;
+    }
+
+    input:checked+.safety-rating {
+        background-color: #faf5ff;
+        border-color: #7c3aed;
+    }
+</style>
+{% endblock %}

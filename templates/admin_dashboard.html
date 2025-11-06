@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-20">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Security Dashboard</h2>
+
+    <!-- Live Alerts -->
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+                <div>
+                    <p class="font-bold text-red-800">Live Emergency Alert</p>
+                    <p class="text-red-600 text-sm">Priya Sharma - Library Area</p>
+                </div>
+            </div>
+            <span class="bg-red-500 text-white px-3 py-1 rounded-full text-sm animate-pulse">ACTIVE</span>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-phoenix-primary">2</p>
+            <p class="text-gray-600 text-sm">Active Alerts</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-green-500">15</p>
+            <p class="text-gray-600 text-sm">Safe Walks Today</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-blue-500">45s</p>
+            <p class="text-gray-600 text-sm">Avg Response Time</p>
+        </div>
+        <div class="bg-white rounded-lg shadow-sm p-4 text-center">
+            <p class="text-2xl font-bold text-yellow-500">5</p>
+            <p class="text-gray-600 text-sm">High Risk Zones</p>
+        </div>
+    </div>
+
+    <!-- Risk Heat Map -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Campus Risk Heat Map</h3>
+        <div id="heatMap" class="h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+            <p class="text-gray-500">Interactive AI-powered risk heat map</p>
+        </div>
+        <div class="flex justify-between mt-4 text-sm">
+            <div class="flex items-center">
+                <div class="w-4 h-4 bg-green-500 rounded mr-2"></div>
+                <span>Low Risk</span>
+            </div>
+            <div class="flex items-center">
+                <div class="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
+                <span>Medium Risk</span>
+            </div>
+            <div class="flex items-center">
+                <div class="w-4 h-4 bg-red-500 rounded mr-2"></div>
+                <span>High Risk</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Incidents -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Recent Incidents</h3>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center p-3 border border-gray-200 rounded">
+                <div>
+                    <p class="font-semibold">Harassment Report</p>
+                    <p class="text-gray-500 text-sm">Library Parking • 20:30</p>
+                </div>
+                <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs">High</span>
+            </div>
+            <div class="flex justify-between items-center p-3 border border-gray-200 rounded">
+                <div>
+                    <p class="font-semibold">Theft Attempt</p>
+                    <p class="text-gray-500 text-sm">Hostel B Block • 18:45</p>
+                </div>
+                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">Medium</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Simulate live updates
+    setInterval(() => {
+        // In real implementation, this would fetch live data from the server
+        console.log('Updating dashboard data...');
+    }, 30000);
+</script>
+{% endblock %}

@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6">
+    <!-- Welcome Section -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">Welcome, {{ user.name }}!</h2>
+                <p class="text-gray-600">Your safety is our priority</p>
+            </div>
+            <div
+                class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
+                {{ user.name[0] }}
+            </div>
+        </div>
+
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+                <div>
+                    <p class="font-semibold text-green-800">System Active & Protected</p>
+                    <p class="text-green-600 text-sm">GPS tracking enabled • Voice commands active</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Big SOS Button -->
+    <div class="text-center mb-8">
+        <button id="sosButton"
+            class="w-72 h-72 bg-gradient-to-br from-red-500 to-red-600 rounded-full shadow-2xl flex items-center justify-center mx-auto emergency-glow active:scale-95 transition-transform duration-200">
+            <div class="text-white text-center">
+                <i class="fas fa-bell text-5xl mb-4"></i>
+                <p class="text-3xl font-bold">SOS</p>
+                <p class="text-lg mt-2 opacity-90">EMERGENCY</p>
+                <p class="text-sm mt-1 opacity-80">Press for immediate help</p>
+            </div>
+        </button>
+    </div>
+    <!-- Quick Actions Grid -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+        <a href="/safety-map" class="bg-white rounded-xl shadow-sm p-3 text-center active:scale-95 transition">
+            <i class="fas fa-map-marked-alt text-blue-500 text-xl mb-2"></i>
+            <p class="text-xs font-semibold text-gray-800">Safety Map</p>
+        </a>
+        <a href="/report" class="bg-white rounded-xl shadow-sm p-3 text-center active:scale-95 transition">
+            <i class="fas fa-flag text-orange-500 text-xl mb-2"></i>
+            <p class="text-xs font-semibold text-gray-800">Report</p>
+        </a>
+        <a href="/safewalk" class="bg-white rounded-xl shadow-sm p-3 text-center active:scale-95 transition">
+            <i class="fas fa-walking text-green-500 text-xl mb-2"></i>
+            <p class="text-xs font-semibold text-gray-800">Safe Walk</p>
+        </a>
+        <a href="/shop" class="bg-white rounded-xl shadow-sm p-3 text-center active:scale-95 transition">
+            <i class="fas fa-shopping-bag text-purple-500 text-xl mb-2"></i>
+            <p class="text-xs font-semibold text-gray-800">Shop</p>
+        </a>
+        <div class="bg-white rounded-xl shadow-sm p-3 text-center">
+            <i class="fas fa-phone text-red-500 text-xl mb-2"></i>
+            <p class="text-xs font-semibold text-gray-800">Emergency</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-3 text-center">
+            <i class="fas fa-info-circle text-gray-500 text-xl mb-2"></i>
+            <p class="text-xs font-semibold text-gray-800">Resources</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+            <i class="fas fa-battery-three-quarters text-green-500 text-xl mb-2"></i>
+            <p class="text-sm font-semibold" id="batteryLevel">{{ user.battery_level }}%</p>
+            <p class="text-xs text-gray-500">Battery</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+            <i class="fas fa-broadcast-tower text-blue-500 text-xl mb-2"></i>
+            <p class="text-sm font-semibold" id="nearbyCount">5 Nearby</p>
+            <p class="text-xs text-gray-500">Devices</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+            <i class="fas fa-clock text-purple-500 text-xl mb-2"></i>
+            <p class="text-sm font-semibest" id="responseTime">45s</p>
+            <p class="text-xs text-gray-500">Avg Response</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <a href="/safety-map" class="bg-white rounded-xl shadow-sm p-4 text-center active:scale-95 transition">
+            <i class="fas fa-map-marked-alt text-purple-500 text-2xl mb-2"></i>
+            <p class="font-semibold text-gray-800">Safety Map</p>
+        </a>
+        <a href="/report" class="bg-white rounded-xl shadow-sm p-4 text-center active:scale-95 transition">
+            <i class="fas fa-flag text-blue-500 text-2xl mb-2"></i>
+            <p class="font-semibold text-gray-800">Report</p>
+        </a>
+    </div>
+
+    <!-- Voice Command Section -->
+    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Voice Command</h3>
+        <button id="voiceCommand"
+            class="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white py-4 rounded-xl font-bold text-lg voice-listening">
+            <i class="fas fa-microphone mr-2"></i>Tap & Speak Command
+        </button>
+        <p class="text-gray-500 text-sm mt-3 text-center">
+            Try: "Emergency", "Report Incident", "Show Safety Map"
+        </p>
+        <div id="voiceFeedback" class="mt-3 text-center text-sm hidden"></div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Safety Status</h3>
+        <div class="space-y-3">
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-green-500 mr-3"></i>
+                    <span class="font-semibold">System Protection</span>
+                </div>
+                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Active</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-location-arrow text-blue-500 mr-3"></i>
+                    <span class="font-semibold">Location Tracking</span>
+                </div>
+                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Enabled</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-microphone text-purple-500 mr-3"></i>
+                    <span class="font-semibold">Voice Commands</span>
+                </div>
+                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Listening</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // SOS Button - Immediate trigger, no confirmation
+        document.getElementById('sosButton').addEventListener('click', function () {
+            triggerEmergencySOS();
+        });
+
+        // Voice command button
+        document.getElementById('voiceCommand').addEventListener('click', function () {
+            startVoiceCommand();
+        });
+
+        function triggerEmergencySOS() {
+            // Show emergency overlay immediately
+            document.getElementById('emergencyOverlay').classList.remove('hidden');
+
+            // Vibrate phone (if supported)
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+
+            // Get current location and battery level
+            fetch('/api/get-location')
+                .then(response => response.json())
+                .then(location => {
+                    // Send emergency alert
+                    return fetch('/api/trigger-emergency', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            user_id: 'user123',
+                            type: 'emergency_sos',
+                            source: 'manual',
+                            location: location,
+                            battery_level: {{ user.battery_level }}
+                    })
+        });
+            })
+            .then(response => response.json())
+        .then(data => {
+            console.log('Emergency alert sent:', data);
+            // Update UI with response info
+            if (data.response_time_estimate) {
+                document.getElementById('etaTime').textContent = data.response_time_estimate;
+            }
+            if (data.nearby_devices) {
+                document.getElementById('nearbyAlert').textContent =
+                    `${data.nearby_devices} nearby users alerted`;
+            }
+        })
+        .catch(error => {
+            console.error('Error sending emergency alert:', error);
+        });
+    }
+
+    function startVoiceCommand() {
+        const feedback = document.getElementById('voiceFeedback');
+        feedback.classList.remove('hidden');
+        feedback.innerHTML = '<i class="fas fa-circle text-red-500 animate-pulse mr-2"></i>Listening... Speak now';
+
+        // Simulate voice command processing
+        setTimeout(() => {
+            const commands = [
+                "Show me the safety map",
+                "I want to report an incident",
+                "Emergency situation",
+                "Open my profile"
+            ];
+            const randomCommand = commands[Math.floor(Math.random() * commands.length)];
+
+            // Process the simulated command
+            fetch('/api/voice-command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    command: randomCommand
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    feedback.innerHTML = `<span class="text-green-600">"${randomCommand}" - ${data.message}</span>`;
+
+                    // Navigate based on action
+                    if (data.action === 'safety_map') {
+                        setTimeout(() => window.location.href = '/safety-map', 1500);
+                    } else if (data.action === 'report') {
+                        setTimeout(() => window.location.href = '/report', 1500);
+                    } else if (data.action === 'profile') {
+                        setTimeout(() => window.location.href = '/profile', 1500);
+                    } else if (data.action === 'dashboard') {
+                        setTimeout(() => window.location.href = '/dashboard', 1500);
+                    }
+                });
+        }, 2000);
+    }
+
+    // Cancel emergency
+    document.getElementById('cancelEmergency').addEventListener('click', function () {
+        document.getElementById('emergencyOverlay').classList.add('hidden');
+
+        // Send cancel notification
+        fetch('/api/cancel-emergency', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: 'user123',
+                emergency_id: 'current'
+            })
+        });
+    });
+
+    // Simulate battery and nearby device updates
+    setInterval(() => {
+        // Update battery level randomly
+        const batteryElement = document.getElementById('batteryLevel');
+        if (batteryElement) {
+            const currentBattery = parseInt(batteryElement.textContent);
+            const newBattery = Math.max(10, currentBattery - Math.floor(Math.random() * 3));
+            batteryElement.textContent = newBattery + '%';
+
+            // Update in backend if battery is low
+            if (newBattery < 20) {
+                fetch('/api/update-battery', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        battery_level: newBattery
+                    })
+                });
+            }
+        }
+
+        // Update nearby device count
+        const nearbyElement = document.getElementById('nearbyCount');
+        if (nearbyElement) {
+            const randomCount = Math.floor(Math.random() * 8) + 2;
+            nearbyElement.textContent = randomCount + ' Nearby';
+        }
+    }, 30000);
+});
+</script>
+{% endblock %}

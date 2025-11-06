@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Campus Safety Map</h2>
+        <p class="text-gray-600 mb-6">AI-powered risk assessment and safety ratings</p>
+
+        <!-- Map Container -->
+        <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
+            <div class="text-center mb-4">
+                <i class="fas fa-map-marked-alt text-4xl text-purple-500 mb-3"></i>
+                <h3 class="text-lg font-semibold text-gray-800">Interactive Safety Map</h3>
+                <p class="text-gray-600 text-sm">Live risk assessment powered by AI</p>
+            </div>
+
+            <!-- Simplified Map Visualization -->
+            <div class="grid grid-cols-3 gap-3 mb-4">
+                {% for item in heatmap_data %}
+                <div class="text-center p-3 rounded-lg 
+                    {% if item.risk_level >= 8 %}bg-red-100 border border-red-300
+                    {% elif item.risk_level >= 5 %}bg-yellow-100 border border-yellow-300
+                    {% else %}bg-green-100 border border-green-300{% endif %}">
+                    <div class="font-semibold text-sm mb-1">{{ item.name.split(' ')[0] }}</div>
+                    <div class="text-xs {% if item.risk_level >= 8 %}text-red-700
+                                      {% elif item.risk_level >= 5 %}text-yellow-700
+                                      {% else %}text-green-700{% endif %}">
+                        Risk: {{ item.risk_level }}/10
+                    </div>
+                    <div class="text-xs text-gray-600">Score: {{ item.score }}/5</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Risk Legend -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4 mb-6">
+            <h4 class="font-semibold text-gray-800 mb-3">Safety Legend</h4>
+            <div class="flex justify-between text-xs">
+                <div class="flex items-center">
+                    <div class="w-3 h-3 bg-green-500 rounded mr-2"></div>
+                    <span>Safe (1-4)</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
+                    <span>Moderate (5-7)</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-3 h-3 bg-red-500 rounded mr-2"></div>
+                    <span>High Risk (8-10)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safety Recommendations -->
+        <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">AI Safety Recommendations</h3>
+
+            <div class="space-y-4">
+                {% for item in heatmap_data if item.risk_level >= 7 %}
+                <div class="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-lg mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-gray-800">{{ item.name }}</h4>
+                            <p class="text-sm text-gray-600 mt-1">
+                                High risk area. Consider avoiding after dark. Use well-lit alternative routes.
+                            </p>
+                            <p class="text-xs text-gray-500 mt-2">
+                                Based on {{ item.reports }} incident reports and AI analysis
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if not heatmap_data|selectattr("risk_level", ">=", 7)|list %}
+                <div class="text-center py-8">
+                    <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
+                    <p class="text-gray-600">All areas currently show good safety ratings</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Updates -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Live Safety Updates</h3>
+        <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-robot text-blue-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="font-semibold">AI Risk Monitoring</p>
+                        <p class="text-sm text-blue-600">Active • Updated 2 min ago</p>
+                    </div>
+                </div>
+                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">Live</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-green-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="font-semibold">Patrol Coverage</p>
+                        <p class="text-sm text-green-600">3 active patrols • 100% coverage</p>
+                    </div>
+                </div>
+                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Optimal</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-bell text-purple-500 text-xl mr-3"></i>
+                    <div>
+                        <p class="font-semibold">Community Reports</p>
+                        <p class="text-sm text-purple-600">{{ heatmap_data|length }} locations monitored</p>
+                    </div>
+                </div>
+                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">Active</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Refresh safety data every 30 seconds
+        function refreshSafetyData() {
+            fetch('/api/get-safety-data')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Safety data updated:', data);
+                    // In a real app, this would update the map visualization
+                })
+                .catch(error => {
+                    console.error('Error updating safety data:', error);
+                });
+        }
+
+        setInterval(refreshSafetyData, 30000);
+    });
+</script>
+{% endblock %}

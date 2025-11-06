@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-6">
+    <!-- User Profile Header -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div class="flex items-center mb-6">
+            <div
+                class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mr-4">
+                {{ user.name[0] if user and user.name else 'U' }}
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-gray-800">{{ user.name if user and user.name else 'User' }}</h2>
+                <p class="text-gray-600">{{ user.id if user and user.id else 'STU000000' }}</p>
+                <p class="text-sm text-gray-500">{{ user.email if user and user.email else 'user@campus.edu' }}</p>
+            </div>
+        </div>
+
+        <!-- Safety Status -->
+        <div class="grid grid-cols-3 gap-4 mb-6">
+            <div class="bg-green-50 p-3 rounded-lg text-center">
+                <i class="fas fa-shield-alt text-green-500 text-xl mb-1"></i>
+                <p class="text-sm font-semibold">Protected</p>
+            </div>
+            <div class="bg-blue-50 p-3 rounded-lg text-center">
+                <i class="fas fa-bell text-blue-500 text-xl mb-1"></i>
+                <p class="text-sm font-semibold">Alerts Ready</p>
+            </div>
+            <div class="bg-purple-50 p-3 rounded-lg text-center">
+                <i class="fas fa-microphone text-purple-500 text-xl mb-1"></i>
+                <p class="text-sm font-semibold">Voice Active</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contacts -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-gray-800">Emergency Contacts</h3>
+            <button class="text-purple-500 text-sm font-semibold">
+                <i class="fas fa-plus mr-1"></i>Add
+            </button>
+        </div>
+        <div class="space-y-3">
+            {% if user and user.emergency_contacts %}
+            {% for contact in user.emergency_contacts %}
+            <div class="flex justify-between items-center p-3 border border-gray-200 rounded-lg">
+                <div>
+                    <p class="font-semibold">{{ contact.name }}</p>
+                    <p class="text-gray-500 text-sm">{{ contact.phone }}</p>
+                    <p class="text-gray-400 text-xs">{{ contact.relationship }}</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="text-blue-500 hover:text-blue-700">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                    <button class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="text-center py-4 text-gray-500">
+                <i class="fas fa-users text-2xl mb-2"></i>
+                <p>No emergency contacts added</p>
+                <p class="text-sm">Add contacts for faster emergency response</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Medical Information -->
+    <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Medical Information</h3>
+        <textarea
+            class="w-full p-3 border border-gray-300 rounded-lg h-24 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            placeholder="Add any medical conditions, allergies, or important information that emergency responders should know...">{{ user.medical_info if user and user.medical_info else '' }}</textarea>
+        <button
+            class="w-full bg-purple-500 text-white py-3 rounded-lg font-bold mt-3 hover:bg-purple-600 transition duration-300">
+            Save Medical Information
+        </button>
+    </div>
+
+    <!-- App Settings -->
+    <div class="bg-white rounded-2xl shadow-sm p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Safety Settings</h3>
+        <div class="space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">GPS Location Tracking</p>
+                    <p class="text-gray-500 text-sm">Share location during emergencies</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500">
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Voice Command</p>
+                    <p class="text-gray-500 text-sm">Always listen for emergency keywords</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500">
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Low Battery Alerts</p>
+                    <p class="text-gray-500 text-sm">Notify when battery is critical</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500">
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Shake to SOS</p>
+                    <p class="text-gray-500 text-sm">Trigger emergency by shaking phone</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500">
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Nearby Device Alerts</p>
+                    <p class="text-gray-500 text-sm">Alert nearby users during emergencies</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" class="sr-only peer" checked>
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500">
+                    </div>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Save medical info
+        const saveButton = document.querySelector('button');
+        saveButton.addEventListener('click', function () {
+            const medicalInfo = document.querySelector('textarea').value;
+
+            // Show saving feedback
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-check mr-2"></i>Saved!';
+            this.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+            this.classList.add('bg-green-500');
+
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.classList.remove('bg-green-500');
+                this.classList.add('bg-purple-500', 'hover:bg-purple-600');
+            }, 2000);
+
+            // In real app, this would save to backend
+            console.log('Medical info saved:', medicalInfo);
+        });
+
+        // Toggle settings
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const setting = this.closest('.flex.justify-between').querySelector('.font-semibold').textContent;
+                console.log('Setting changed:', setting, this.checked);
+
+                // In real app, this would update user settings via API
+            });
+        });
+    });
+</script>
+{% endblock %}

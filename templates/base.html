@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoenix - Smart Campus Protection for Women</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        phoenix: {
+                            primary: '#7C3AED',
+                            secondary: '#5B21B6',
+                            emergency: '#EF4444',
+                            dark: '#1F2937'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .emergency-glow {
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        }
+
+        .voice-listening {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Improved mobile navigation */
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: #7C3AED;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Emergency Header -->
+    <!-- In the emergency header section, add error handling -->
+    <div class="bg-phoenix-primary text-white p-3 shadow-lg">
+        <div class="flex justify-between items-center">
+            <h1 class="text-lg font-bold">Phoenix Safety</h1>
+            <div class="flex items-center space-x-2">
+                <div id="connectionStatus" class="text-xs bg-blue-500 px-2 py-1 rounded">
+                    <i class="fas fa-wifi mr-1"></i>Connected
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-4 pb-24">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Enhanced Navigation with more items -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-bottom shadow-lg">
+        <div class="flex justify-around p-2">
+            <a href="/dashboard"
+                class="nav-item flex flex-col items-center p-2 text-gray-600 {% if request.path == '/dashboard' %}text-phoenix-primary active{% endif %}">
+                <i class="fas fa-home text-xl"></i>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="/safety-map"
+                class="nav-item flex flex-col items-center p-2 text-gray-600 {% if request.path == '/safety-map' %}text-phoenix-primary active{% endif %}">
+                <i class="fas fa-map-marked-alt text-xl"></i>
+                <span class="text-xs mt-1">Map</span>
+            </a>
+            <a href="/emergency"
+                class="nav-item flex flex-col items-center p-2 text-phoenix-emergency {% if request.path == '/emergency' %}active{% endif %}">
+                <i class="fas fa-shield-alt text-xl"></i>
+                <span class="text-xs mt-1">SOS</span>
+            </a>
+            <a href="/shop"
+                class="nav-item flex flex-col items-center p-2 text-gray-600 {% if request.path == '/shop' %}text-phoenix-primary active{% endif %}">
+                <i class="fas fa-shopping-bag text-xl"></i>
+                <span class="text-xs mt-1">Shop</span>
+            </a>
+            <a href="/profile"
+                class="nav-item flex flex-col items-center p-2 text-gray-600 {% if request.path == '/profile' %}text-phoenix-primary active{% endif %}">
+                <i class="fas fa-user text-xl"></i>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Emergency Overlay -->
+    <div id="emergencyOverlay" class="fixed inset-0 bg-phoenix-emergency z-50 hidden">
+        <div class="flex flex-col items-center justify-center h-full text-white text-center p-6">
+            <i class="fas fa-bell text-6xl mb-6 animate-pulse"></i>
+            <h2 class="text-4xl font-bold mb-4">EMERGENCY ALERT SENT</h2>
+            <p class="text-xl mb-2">Help is on the way!</p>
+            <p class="text-lg mb-6" id="responseTime">Estimated response: <span id="etaTime">45 seconds</span></p>
+
+            <div class="bg-white bg-opacity-20 rounded-xl p-4 mb-6 w-full max-w-sm">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-shield-alt mr-2"></i>
+                    <p class="font-semibold">Security Notified</p>
+                </div>
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-location-crosshairs mr-2"></i>
+                    <p class="font-semibold">Live Location Shared</p>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-users mr-2"></i>
+                    <p class="font-semibold" id="nearbyAlert">Nearby users alerted</p>
+                </div>
+            </div>
+
+            <button id="cancelEmergency"
+                class="bg-white text-phoenix-emergency px-8 py-3 rounded-xl font-bold text-lg mt-4 shadow-lg">
+                CANCEL ALERT
+            </button>
+        </div>
+    </div>
+
+    <!-- Improved Voice Command Interface -->
+    <div id="voiceInterface" class="fixed bottom-24 right-4 z-40">
+        <button id="voiceButton"
+            class="w-14 h-14 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full shadow-lg flex items-center justify-center">
+            <i class="fas fa-microphone text-xl"></i>
+        </button>
+        <div id="voiceFeedback"
+            class="absolute bottom-16 right-0 bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-sm hidden max-w-xs">
+            <i class="fas fa-circle text-red-500 animate-pulse mr-2"></i>
+            <span>Listening...</span>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+
+</html>
